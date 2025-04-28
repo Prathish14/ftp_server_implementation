@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 
 # Set environment variables
-ENV PORT=21 
+ENV PORT=2121
 ENV UV_LINK_MODE=copy
 
 # Set the working directory in the container
