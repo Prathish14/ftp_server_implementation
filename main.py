@@ -3,7 +3,6 @@ from pyftpdlib.servers import ThreadedFTPServer
 from pyftpdlib.authorizers import DummyAuthorizer, AuthenticationFailed
 from password_encoding_service.password_encoding import PasswordEncoding
 from fotoowl_internal_apis.fotoowl_internal_apis import FotoowlInternalApis
-from upload_service.b2_uploader import BotoB2
 import logging
 import os
 import hashlib
