@@ -34,7 +34,7 @@ RUN mkdir -p /app/image_storage
 
 # Expose FTP and passive ports
 EXPOSE 2121
-EXPOSE 60000-65535
+EXPOSE 60010-60020
 
 # Run your main script
 CMD ["python", "main.py"]
