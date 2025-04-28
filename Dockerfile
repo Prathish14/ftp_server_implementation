@@ -2,26 +2,28 @@ FROM python:3.12-slim
 
 # Set environment variables
 ENV PORT=2121
-ENV UV_LINK_MODE=copy
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Upgrade pip to the latest version
+# Upgrade pip first
 RUN pip install --upgrade pip
 
+# Install uv
+RUN pip install uv
 
-# Copy the requirements.txt file to the container
+# Copy requirements.txt
 COPY requirements.txt /app/
 
-# Install the dependencies from requirements.txt using `uv pip`
+# Install dependencies using uv
 RUN uv pip install --system -r requirements.txt
 
-# Copy the rest of your application files into the container
+# Copy the rest of the application
 COPY . /app/
 
-# Expose the FTP port (or the port you want to use for your app)
-EXPOSE $PORT
+# Expose FTP and passive ports
+EXPOSE 2121
+EXPOSE 30000-30010
 
-# Run the FTP server (replace 'ftp_server.py' with your actual script if needed)
+# Run your main script
 CMD ["python", "main.py"]
