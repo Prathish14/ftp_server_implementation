@@ -27,7 +27,7 @@ class FotoowlInternalApis:
             return None
     
     @staticmethod
-    def send_image_info_to_fotoowl_for_processing(ftp_user_id: str, image_path: str):
+    def send_image_info_to_fotoowl_for_processing(ftp_user_id: str, image_path: str, content):
         try:
             url = fotoowl_process_ftp_image_api
                 
@@ -38,7 +38,8 @@ class FotoowlInternalApis:
             
             body = {
                 "ftp_user_id": ftp_user_id,
-                "image_path": image_path
+                "image_path": image_path,
+                "content": content
             }
 
             response = requests.request("POST", url, headers=headers, json=body)

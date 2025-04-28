@@ -65,7 +65,10 @@ class MyHandler(TLS_FTPHandler):
     def on_file_received(self, file):
         filename = Path(file).name
         print(filename)
-        FotoowlInternalApis.send_image_info_to_fotoowl_for_processing(ftp_user_id=self.username, image_path=filename)
+        with open(file, 'rb') as file_data:
+            binary_data = file_data.read()
+        FotoowlInternalApis.send_image_info_to_fotoowl_for_processing(ftp_user_id=self.username, image_path=filename, content=binary_data)
+        os.remove(file)
 
     def on_incomplete_file_received(self, file):
         os.remove(file)
