@@ -83,8 +83,8 @@ def main():
     handler.authorizer = AuthenticationHandler()
 
     handler.banner = "fotoowl.ai ftp server is ready for use!!!"
-    #handler.masquerade_address = public_ip_of_ftp_server 
-    #handler.passive_ports = range(60000, 65535)
+    handler.masquerade_address = public_ip_of_ftp_server 
+    handler.passive_ports = range(60000, 65535)
 
     logging.basicConfig(level=logging.DEBUG)
 

@@ -1,0 +1,16 @@
+version: '1.0'
+
+services:
+  ftps_server:  # <--- Give your service a name
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2121:2121"
+      - "60000-65535:60000-65535"
+    environment:
+      - PORT=2121
+    volumes:
+      - ./logs:/app/logs  # (optional) if you want to store logs
+    restart: always
+    container_name: my_app_container  # Fixed container name for easier control

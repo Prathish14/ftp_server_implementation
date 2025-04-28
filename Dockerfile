@@ -23,7 +23,7 @@ COPY . /app/
 
 # Expose FTP and passive ports
 EXPOSE 2121
-EXPOSE 30000-30010
+EXPOSE 60000-65535
 
 # Run your main script
 CMD ["python", "main.py"]
