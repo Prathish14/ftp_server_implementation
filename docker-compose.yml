@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "2121:2121"
-      - "61000-62000:61000-62000"
+      - "60010-60020:60010-60020"
     environment:
       - PORT=2121
     volumes:
