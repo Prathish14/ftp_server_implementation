@@ -6,6 +6,8 @@ services:
     ports:
       - "2121:2121"
       - "60010-60020:60010-60020"
+    env_file: 
+      - .env  
     environment:
       - PORT=2121
     volumes:
