@@ -11,7 +11,7 @@ services:
     environment:
       - PORT=2121
     volumes:
-      - ./logs:/app/logs
+      - /ftp_server_implementation:/app/image_storage
     restart: always
     container_name: my_app_container
     healthcheck:
