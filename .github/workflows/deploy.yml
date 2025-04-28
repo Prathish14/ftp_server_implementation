@@ -21,7 +21,7 @@ jobs:
         key: ${{ secrets.VULTR_SERVER_SSH_KEY }}
         port: 22
         script: |
-          cd /home/ubuntu/ftp_server_implementation
+          cd /ftp_server_implementation
           git pull origin main
           docker-compose pull
           docker-compose build
