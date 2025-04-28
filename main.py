@@ -21,7 +21,7 @@ KEYFILE = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "ftpd.key")
 )
 
-user_event_info = {}
+public_ip_of_ftp_server = os.environ.get("PUBLIC_IP_OF_FTP_SERVER")
 
 class AuthenticationHandler(DummyAuthorizer):
     def validate_authentication(self, username, password, handler):
@@ -29,17 +29,13 @@ class AuthenticationHandler(DummyAuthorizer):
             if not username or not password:
                 raise KeyError
             
-            ftp_user_id,event_id,event_user_id = FotoowlInternalApis.verify_user_given_credentials(user_id=username, password=password)
+            encrypted_password = PasswordEncoding.encrypt_the_ftp_user_password(password=password)
+            event_id = FotoowlInternalApis.verify_user_given_credentials(user_id=username, password=encrypted_password)
 
             if not event_id:
                 raise KeyError
             else:
                 self.add_user(username, '', "./image_storage", perm='elradfmwMT')
-                user_event_info[username] = {
-                    "username": username,
-                    "event_id": event_id,
-                    "event_user_id": event_user_id
-                }
 
             print(f"Not raising error, i am allowing you, username:{username} and password: {password}!!!!")
 
@@ -47,16 +43,18 @@ class AuthenticationHandler(DummyAuthorizer):
             raise AuthenticationFailed
 
 
-# It only handles control connections + Data connections
+
 class MyHandler(TLS_FTPHandler):
 
     def on_connect(self):
         print("%s:%s connected" % (self.remote_ip, self.remote_port))
 
     def on_disconnect(self):
-        print(f"this user got disconnected on disconnect: {self.username}")
-        self.authorizer.remove_user(self.username)
-        del user_event_info[self.username]
+        try:
+            print(f"this user got disconnected on disconnect: {self.username}")
+            self.authorizer.remove_user(self.username)
+        except Exception as e:
+            print(f"while disconnecting some error occured!!!, error:{e}")
 
     def on_login(self, username):
         pass
@@ -64,36 +62,11 @@ class MyHandler(TLS_FTPHandler):
     def on_logout(self, username):
         print(f"this user got disconnected on logout: {self.username}")
         self.authorizer.remove_user(self.username)
-        del user_event_info[self.username]
-        pass
 
     def on_file_received(self, file):
-        event_id = user_event_info[self.username].get("event_id")
-        event_user_id = user_event_info[self.username].get("event_user_id")
         filename = Path(file).name
-        mime_type, encoding = mimetypes.guess_type(file)
-        
-
-        with open(file, 'rb') as file_data:
-            binary_data = file_data.read()
-            print(binary_data)
-
-        content = binascii.b2a_base64(binary_data).decode("utf8")
-        content = binascii.a2b_base64(content)
-        jpg_as_np = np.frombuffer(content, dtype=np.uint8)
-        img = cv.imdecode(jpg_as_np, flags=1)
-        img_width = img.shape[1]
-        img_height = img.shape[0]
-
-        raw_id,file_path = BotoB2.upload_ftp_uploaded_image_to_event_bucket(content=binary_data, content_type=mime_type, file_name=filename,
-                                                         event_id=event_id, event_user_id=event_user_id)
-        
-        if raw_id and file_path:
-            FotoowlInternalApis.send_uploded_image_info_to_event_picture_process(event_id=event_id, image_name=filename, mime_type=mime_type,
-                                                                                 b2_id=raw_id, path=filename, user_id=event_user_id, 
-                                                                                 height=img_height, width=img_width)
-        os.remove(file)
-
+        print(filename)
+        FotoowlInternalApis.send_image_info_to_fotoowl_for_processing(ftp_user_id=self.username, image_path=filename)
 
     def on_incomplete_file_received(self, file):
         os.remove(file)
@@ -109,9 +82,18 @@ def main():
     handler.certfile = CERTFILE
     handler.keyfile = KEYFILE
     handler.authorizer = AuthenticationHandler()
+
+    handler.banner = "fotoowl.ai ftp server is ready for use!!!"
+    #handler.masquerade_address = public_ip_of_ftp_server 
+    #handler.passive_ports = range(60000, 65535)
+
     logging.basicConfig(level=logging.DEBUG)
 
     server = ThreadedFTPServer(('0.0.0.0', 2121), handler)
+
+    server.max_cons = 100
+    server.max_cons_per_ip = 5
+
     server.serve_forever()
 
 if __name__ == "__main__":
