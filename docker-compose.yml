@@ -1,16 +1,19 @@
-version: '1.0'
-
 services:
-  ftps_server:  # <--- Give your service a name
+  ftps_server:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "2121:2121"
-      - "60000-65535:60000-65535"
+      - "61000-62000:61000-62000"
     environment:
       - PORT=2121
     volumes:
-      - ./logs:/app/logs  # (optional) if you want to store logs
+      - ./logs:/app/logs
     restart: always
-    container_name: my_app_container  # Fixed container name for easier control
+    container_name: my_app_container
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2121/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
