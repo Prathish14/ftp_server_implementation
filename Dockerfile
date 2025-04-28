@@ -29,6 +29,9 @@ RUN uv pip install --system -r requirements.txt
 # Copy the rest of the application
 COPY . /app/
 
+# Create image_storage folder
+RUN mkdir -p /app/image_storage
+
 # Expose FTP and passive ports
 EXPOSE 2121
 EXPOSE 60000-65535
