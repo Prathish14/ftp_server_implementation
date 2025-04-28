@@ -25,5 +25,5 @@ jobs:
           git pull origin main
           docker-compose pull
           docker-compose build
-          docker-compose up --build --no-deps --force-recreate -d app_service
+          docker-compose up --build --no-deps --force-recreate -d ftps_server
           docker image prune -f
