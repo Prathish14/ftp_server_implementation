@@ -1,4 +1,6 @@
 import requests
+import base64
+import json
 import os
 
 fotoowl_internal_api_key = os.environ.get("FOTOOWL_INTERNAL_API_KEY")
@@ -35,14 +37,14 @@ class FotoowlInternalApis:
                 'Authorization': f"Basic {fotoowl_internal_api_key}",
                 'Content-Type': 'application/json'
             }
-            
+            encoded_content = base64.b64encode(content).decode("utf-8")
             body = {
                 "ftp_user_id": ftp_user_id,
                 "image_path": image_path,
-                "content": content
+                "content_encoded": encoded_content
             }
 
-            response = requests.request("POST", url, headers=headers, json=body)
+            response = requests.request("POST", url, headers=headers, data=json.dumps(body))
             print(response.text)
         
         except Exception as e:
