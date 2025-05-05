@@ -9,7 +9,7 @@ fotoowl_process_ftp_image_api = os.environ.get("FOTOOWL_PROCESS_FTP_IMAGE_API")
 
 class FotoowlInternalApis:
     @staticmethod
-    def verify_user_given_credentials(user_id: str, password: str):
+    def verify_user_given_credentials(username: str, password: str):
         try:
             url = fotoowl_ftp_user_verify_api
                 
@@ -17,7 +17,7 @@ class FotoowlInternalApis:
                 'Authorization': f"Basic {fotoowl_internal_api_key}",
                 'Content-Type': 'application/json'
             }
-            param_dict = {'user_id': user_id, 'password': password}
+            param_dict = {'username': username, 'password': password}
 
             response = requests.request("GET", url, headers=headers, params=param_dict)
             print(response.text)

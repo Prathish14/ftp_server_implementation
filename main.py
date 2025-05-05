@@ -29,7 +29,7 @@ class AuthenticationHandler(DummyAuthorizer):
                 raise KeyError
             
             encrypted_password = PasswordEncoding.encrypt_the_ftp_user_password(password=password)
-            event_id = FotoowlInternalApis.verify_user_given_credentials(user_id=username, password=encrypted_password)
+            event_id = FotoowlInternalApis.verify_user_given_credentials(username=username, password=encrypted_password)
 
             if not event_id:
                 raise KeyError
