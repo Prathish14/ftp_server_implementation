@@ -23,7 +23,8 @@ class FotoowlInternalApis:
             print(response.text)
             data = response.json().get("data")
             event_id = data.get("event_id")
-            return event_id
+            event_creator_id = data.get("creator_user_id")
+            return event_id, event_creator_id
         
         except Exception as e:
             return None
