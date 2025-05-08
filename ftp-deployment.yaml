@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-ftp-deployment  # Name of your deployment
+  labels:
+    app: my-ftp-app  # Label used for selectors
+spec:
+  replicas: 3  # The number of Pods to run
+  selector:
+    matchLabels:
+      app: my-ftp-app  # This label must match the label in the template
+  template:
+    metadata:
+      labels:
+        app: my-ftp-app  # The same label as in the selector
+    spec:
+      containers:
+        - name: my-ftp-server-container
+          image: ftp_server:latest  # Your Docker image built inside Minikube
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 2121  # Expose port 2121 for your Python app (FTP control port)
+            - containerPort: 60010  # Passive FTP port range start
+            - containerPort: 60011  # Passive FTP port range
+            - containerPort: 60012  # Passive FTP port range
+            - containerPort: 60013  # Passive FTP port range
+            - containerPort: 60014  # Passive FTP port range
+            - containerPort: 60015  # Passive FTP port range
+            - containerPort: 60016  # Passive FTP port range
+            - containerPort: 60017  # Passive FTP port range
+            - containerPort: 60018  # Passive FTP port range
+            - containerPort: 60019  # Passive FTP port range
+            - containerPort: 60020  # Passive FTP port range
+          envFrom:
+            - secretRef:
+                name: my-ftp-server-secrets  # Reference to the Secrets in Kubernetes
+          resources:
+            requests:
+              memory: "128Mi"  # Minimum memory the container requires
+              cpu: "250m"  # 0.25 core, Minimum CPU the container requires
+            limits:
+              memory: "256Mi"  # Maximum memory the container can use
+              cpu: "500m"  # 0.5 core, Maximum CPU the container can use
+          readinessProbe:
+            tcpSocket:
+              port: 2121  # Check if the FTP server is listening on port 2121
+            initialDelaySeconds: 10  # Wait for 10 seconds before starting the probe
+            periodSeconds: 5         # Run the probe every 5 seconds
+            timeoutSeconds: 2        # Timeout after 2 seconds if no response
+            failureThreshold: 3      # Retry 3 times before marking the container as unhealthy
+
+          livenessProbe:
+            tcpSocket:
+              port: 2121  # Check if the FTP server is still listening on port 2121
+            initialDelaySeconds: 15  # Wait for 15 seconds before starting the probe
+            periodSeconds: 10        # Run the probe every 10 seconds
+            timeoutSeconds: 2        # Timeout after 2 seconds if no response
+            failureThreshold: 3      # Retry 3 times before restarting the container

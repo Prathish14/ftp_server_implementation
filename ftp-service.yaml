@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-ftp-server-service
+spec:
+  selector:
+    app: my-ftp-app
+  type: NodePort
+  sessionAffinity: ClientIP
+  ports:
+    - name: ftp-control
+      protocol: TCP
+      port: 2121
+      targetPort: 2121
+      nodePort: 30021
+    # Passive port range (60010–60020)
+    - name: passive-60010
+      protocol: TCP
+      port: 60010
+      targetPort: 60010
+      nodePort: 30022
+    - name: passive-60011
+      protocol: TCP
+      port: 60011
+      targetPort: 60011
+    - name: passive-60012
+      protocol: TCP
+      port: 60012
+      targetPort: 60012
+    - name: passive-60013
+      protocol: TCP
+      port: 60013
+      targetPort: 60013
+    - name: passive-60014
+      protocol: TCP
+      port: 60014
+      targetPort: 60014
+    - name: passive-60015
+      protocol: TCP
+      port: 60015
+      targetPort: 60015
+    - name: passive-60016
+      protocol: TCP
+      port: 60016
+      targetPort: 60016
+    - name: passive-60017
+      protocol: TCP
+      port: 60017
+      targetPort: 60017
+    - name: passive-60018
+      protocol: TCP
+      port: 60018
+      targetPort: 60018
+    - name: passive-60019
+      protocol: TCP
+      port: 60019
+      targetPort: 60019
+    - name: passive-60020
+      protocol: TCP
+      port: 60020
+      targetPort: 60020
