@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftp-server
+  template:
+    metadata:
+      labels:
+        app: sftp-server
+    spec:
+      containers:
+      - name: sftp
+        image: sftp-server-01:latest
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 8022
+        envFrom:
+          - secretRef:
+              name: sftp-secrets-01
+        env:
+          - name: PORT
+            value: "8022"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

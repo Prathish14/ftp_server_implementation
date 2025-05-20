@@ -1,0 +1,98 @@
+# Start Minikube
+minikube start
+
+# Set Docker env to use Minikube's Docker daemon
+eval $(minikube docker-env)
+
+# Build Docker image inside Minikube
+docker build -t sftp-server-01:latest .
+
+# Create Kubernetes Deployment
+touch deployment.yaml
+kubectl apply -f deployment.yaml
+
+# Apply environment variables from file
+touch env-configmap.yaml
+kubectl apply -f env-configmap.yaml
+
+# Create or apply service
+touch service.yaml
+kubectl apply -f service.yaml
+
+# Expose service via Minikube
+echo $(minikube service myapp-service --url)
+
+# View all pods
+kubectl get pods
+
+# View all services
+kubectl get svc
+
+# View all deployments
+kubectl get deployments
+
+# View logs for a pod
+kubectl logs <pod-name>
+
+# Exec into a running pod
+kubectl exec -it <pod-name> -- /bin/bash
+
+# Delete pod (for redeployment test)
+kubectl delete pod <pod-name>
+
+# Rebuild Docker image
+docker build -t myapp:latest .
+
+# Reapply deployment to trigger rollout
+kubectl apply -f deployment.yaml
+
+# Check rollout status
+kubectl rollout status deployment/myapp
+
+# Delete all resources
+kubectl delete -f ftp-deployment.yaml
+kubectl delete -f service.yaml
+kubectl delete -f env-configmap.yaml
+
+# Stop Minikube
+minikube stop
+
+# Delete Minikube cluster
+minikube delete
+
+# delete all pods 
+kubectl delete pods --all
+kubectl delete deployments --all
+kubectl delete services --all
+kubectl delete configmaps --all
+kubectl delete ingress --all
+
+
+#creating secret file (.env)
+kubectl create secret generic sftp-secrets-01 --from-env-file=.env
+
+#deleting secret file
+kubectl delete secret my-ftp-s30022erver-secrets
+
+#Applying deployments
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f ftp-deployment.yaml
+kubectl apply -f ftp-service.yaml
+
+#227 Entering Passive Mode (192,168,49,2,234,106)
+234*256 + 106 = 60010 (port- passive connection)
+
+#check port is open or not
+telnet 192.168.49.2 30021
+
+# go inside pod
+kubectl exec -it sftp-server-59664c9f87-d6pnt -- sh
+
+kubectl exec -it my-ftp-deployment-7699c478ff-8jbws -- netstat -tulnp | grep 60010
+
+netstat -tulnp | grep 2121
+
+# re deploy service
+kubectl rollout restart deployment my-ftp-deployment
+
+
